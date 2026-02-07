@@ -1,68 +1,86 @@
-import React, { Component } from "react";
+import { useState } from "react";
+import MovieList from "./MovieList";
+import Filter from "./Filter";
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-
-    // 🔹 State initial
-    this.state = {
-      Person: {
-        fullName: "Lionel Messi",
-        bio: "Professional football player",
-        imgSrc: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Lionel_Messi_20180626.jpg",
-        profession: "Footballer",
-      },
-      shows: false,
-      timeInterval: 0,
-    };
+function App() {
+const [movies, setMovies] = useState([
+  {
+    title: "Inception",
+    description: "Film de science-fiction",
+    posterURL: "https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg",
+    rating: 5
+  },
+  {
+    title: "Titanic",
+    description: "Film romantique",
+    posterURL: "https://upload.wikimedia.org/wikipedia/en/2/22/Titanic_poster.jpg",
+    rating: 4
   }
+]);
+  const [newMovie, setNewMovie] = useState({
+    title: "",
+    description: "",
+    posterURL: "",
+    rating: ""
+  });
 
-  // 🔹 Lifecycle: component mounted
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      this.setState((prevState) => ({
-        timeInterval: prevState.timeInterval + 1,
-      }));
-    }, 1000);
-  }
+  const [filter, setFilter] = useState({ title: "", rate: 0 });
 
-  // 🔹 Lifecycle: component unmounted
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  // 🔹 Toggle show state
-  toggleShow = () => {
-    this.setState({ shows: !this.state.shows });
+  const addMovie = () => {
+    setMovies([...movies, newMovie]);
+    setNewMovie({ title: "", description: "", posterURL: "", rating: "" });
   };
 
-  render() {
-    const { Person, shows, timeInterval } = this.state;
+  const filteredMovies = movies.filter(
+    movie =>
+      movie.title.toLowerCase().includes(filter.title.toLowerCase()) &&
+      movie.rating >= filter.rate
+  );
 
-    return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <button onClick={this.toggleShow}>
-          {shows ? "Hide Profile" : "Show Profile"}
-        </button>
+  return (
+    <div style={{ textAlign: "center" }}>
+      <h1>🎬 Movie App</h1>
 
-        <p>⏱ Time since component mounted: {timeInterval} seconds</p>
+      <h2>Ajouter un film</h2>
 
-        {shows && (
-          <div>
-            <h2>{Person.fullName}</h2>
-            <img
-              src={Person.imgSrc}
-              alt="profile"
-              width="200"
-              style={{ borderRadius: "10px" }}
-            />
-            <p><strong>Bio:</strong> {Person.bio}</p>
-            <p><strong>Profession:</strong> {Person.profession}</p>
-          </div>
-        )}
-      </div>
-    );
-  }
+      <input
+        placeholder="Titre"
+        value={newMovie.title}
+        onChange={e => setNewMovie({ ...newMovie, title: e.target.value })}
+      />
+      <br />
+
+      <input
+        placeholder="Description"
+        value={newMovie.description}
+        onChange={e => setNewMovie({ ...newMovie, description: e.target.value })}
+      />
+      <br />
+
+      <input
+        placeholder="Poster URL"
+        value={newMovie.posterURL}
+        onChange={e => setNewMovie({ ...newMovie, posterURL: e.target.value })}
+      />
+      <br />
+
+      <input
+        type="number"
+        placeholder="Rating (1-5)"
+        value={newMovie.rating}
+        onChange={e =>
+          setNewMovie({ ...newMovie, rating: Number(e.target.value) })
+        }
+      />
+      <br />
+
+      <button onClick={addMovie}>Ajouter</button>
+
+      <Filter setFilter={setFilter} />
+
+      <MovieList movies={filteredMovies} />
+    </div>
+  );
 }
 
 export default App;
