@@ -1,35 +1,30 @@
 import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MovieList from "./MovieList";
+import MovieDetails from "./MovieDetails";
 import Filter from "./Filter";
 
 function App() {
-const [movies, setMovies] = useState([
-  {
-    title: "Inception",
-    description: "Film de science-fiction",
-    posterURL: "https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg",
-    rating: 5
-  },
-  {
-    title: "Titanic",
-    description: "Film romantique",
-    posterURL: "https://upload.wikimedia.org/wikipedia/en/2/22/Titanic_poster.jpg",
-    rating: 4
-  }
-]);
-  const [newMovie, setNewMovie] = useState({
-    title: "",
-    description: "",
-    posterURL: "",
-    rating: ""
-  });
+  const [movies] = useState([
+    {
+      id: 1,
+      title: "Inception",
+      description: "Un film de science-fiction sur les rêves et la réalité.",
+      posterURL: "https://upload.wikimedia.org/wikipedia/en/7/7f/Inception_ver3.jpg",
+      rating: 5,
+      trailer: "https://www.youtube.com/embed/YoHD9XEInc0"
+    },
+    {
+      id: 2,
+      title: "Titanic",
+      description: "Une histoire d’amour tragique en pleine mer.",
+      posterURL: "https://upload.wikimedia.org/wikipedia/en/2/22/Titanic_poster.jpg",
+      rating: 4,
+      trailer: "https://www.youtube.com/embed/kVrqfYjkTdQ"
+    }
+  ]);
 
   const [filter, setFilter] = useState({ title: "", rate: 0 });
-
-  const addMovie = () => {
-    setMovies([...movies, newMovie]);
-    setNewMovie({ title: "", description: "", posterURL: "", rating: "" });
-  };
 
   const filteredMovies = movies.filter(
     movie =>
@@ -38,48 +33,24 @@ const [movies, setMovies] = useState([
   );
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>🎬 Movie App</h1>
+    <Router>
+      <div style={{ textAlign: "center" }}>
+        <h1>🎬 Movie App</h1>
 
-      <h2>Ajouter un film</h2>
-
-      <input
-        placeholder="Titre"
-        value={newMovie.title}
-        onChange={e => setNewMovie({ ...newMovie, title: e.target.value })}
-      />
-      <br />
-
-      <input
-        placeholder="Description"
-        value={newMovie.description}
-        onChange={e => setNewMovie({ ...newMovie, description: e.target.value })}
-      />
-      <br />
-
-      <input
-        placeholder="Poster URL"
-        value={newMovie.posterURL}
-        onChange={e => setNewMovie({ ...newMovie, posterURL: e.target.value })}
-      />
-      <br />
-
-      <input
-        type="number"
-        placeholder="Rating (1-5)"
-        value={newMovie.rating}
-        onChange={e =>
-          setNewMovie({ ...newMovie, rating: Number(e.target.value) })
-        }
-      />
-      <br />
-
-      <button onClick={addMovie}>Ajouter</button>
-
-      <Filter setFilter={setFilter} />
-
-      <MovieList movies={filteredMovies} />
-    </div>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Filter setFilter={setFilter} />
+                <MovieList movies={filteredMovies} />
+              </>
+            }
+          />
+          <Route path="/movie/:id" element={<MovieDetails movies={movies} />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
