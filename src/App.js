@@ -1,12 +1,10 @@
-import AddTask from "./AddTask";
-import ListTask from "./ListTask";
+import React from "react";
+import UserList from "./UserList";
 
 function App() {
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>📝 Redux ToDo App</h1>
-      <AddTask />
-      <ListTask />
+    <div>
+      <UserList />
     </div>
   );
 }
